@@ -15,6 +15,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import org.example.project.model.User
+import org.example.project.model.UserList
 
 class ApiService {
 
@@ -63,7 +64,7 @@ class ApiService {
         }
     }
 
-    suspend fun getUsers(limit: Int = 10, skip: Int = 0): List<User> {
+    suspend fun getUsers(limit: Int = 10, skip: Int = 0): UserList {
         val response = httpClient.get {
             url {
                 protocol = URLProtocol.HTTPS
@@ -76,10 +77,10 @@ class ApiService {
 
         if (response.status.isSuccess()) {
             val responseJson = Json.parseToJsonElement(response.bodyAsText())
-            val usersJson = responseJson.jsonObject["users"] ?: throw IllegalArgumentException("Invalid 'users' key")
-            return Json.decodeFromJsonElement<List<User>>(usersJson)
+//            val usersJson = responseJson.jsonObject["users"] ?: throw IllegalArgumentException("Invalid 'users' key")
+            return Json.decodeFromJsonElement<UserList>(responseJson)
         } else {
-            return emptyList()
+            return UserList(emptyList(), 0, 0, 0)
         }
     }
 }

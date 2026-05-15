@@ -33,13 +33,14 @@ import desktopapp.composeapp.generated.resources.compose_multiplatform
 import kotlinx.coroutines.launch
 import org.example.project.api.ApiService
 import org.example.project.model.User
+import org.example.project.model.UserList
 
 @Composable
 @Preview
 fun App() {
     val scope = rememberCoroutineScope()
     var apiResponse by remember { mutableStateOf("Waiting...") }
-    var users by remember { mutableStateOf(listOf(User(-1, "N/A", "N/A", "N/A", "N/A"))) }
+    var userList by remember { mutableStateOf(UserList(emptyList(), 0, 0, 0)) }
     MaterialTheme {
 //        Column(
 //            modifier = Modifier.fillMaxSize(),
@@ -64,7 +65,7 @@ fun App() {
 
         scope.launch {
             val apiService = ApiService()
-            users = apiService.getUsers(limit = 10, skip = 0)
+            userList = apiService.getUsers(limit = 10, skip = 0)
         }
 
         LazyColumn(
@@ -83,7 +84,7 @@ fun App() {
                 }
             }
 
-            items(users) { user ->
+            items(userList.users) { user ->
                 Row(modifier = Modifier.fillMaxWidth()) {
                     TableCell(text = user.id.toString(), weight = 0.1f)
                     TableCell(text = user.username, weight = 0.1f)
