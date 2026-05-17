@@ -26,6 +26,10 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.cio)
+
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.transitions)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

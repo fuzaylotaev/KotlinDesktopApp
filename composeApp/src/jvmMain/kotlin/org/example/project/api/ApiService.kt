@@ -1,7 +1,6 @@
 package org.example.project.api
 
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
@@ -64,7 +63,7 @@ class ApiService {
         }
     }
 
-    suspend fun getUsers(limit: Int = 10, skip: Int = 0): UserList {
+    suspend fun queryUsers(limit: Int = 10, skip: Int = 0, searchText: String): UserList {
         val response = httpClient.get {
             url {
                 protocol = URLProtocol.HTTPS
@@ -72,15 +71,31 @@ class ApiService {
                 path("users/search")
                 parameter("limit", limit)
                 parameter("skip", skip)
+                parameter("q", searchText)
             }
         }
 
         if (response.status.isSuccess()) {
             val responseJson = Json.parseToJsonElement(response.bodyAsText())
-//            val usersJson = responseJson.jsonObject["users"] ?: throw IllegalArgumentException("Invalid 'users' key")
             return Json.decodeFromJsonElement<UserList>(responseJson)
         } else {
             return UserList(emptyList(), 0, 0, 0)
+        }
+    }
+
+    suspend fun getUser(userId: Long): User? {
+        val response = httpClient.get {
+            url {
+                protocol = URLProtocol.HTTPS
+                host = "dummyjson.com"
+                path("users/${userId}")
+            }
+        }
+        if (response.status.isSuccess()) {
+            val responseJson = Json.parseToJsonElement(response.bodyAsText())
+            return Json.decodeFromJsonElement<User>(responseJson)
+        } else {
+            return null
         }
     }
 }
